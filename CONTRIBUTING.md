@@ -17,7 +17,7 @@ git --version
 ```
 버전이 나오면 설치돼 있는 거예요. 안 나오면 [git-scm.com](https://git-scm.com)에서 설치하세요.
 
-CURSOR 쓰는 사람등 부자 일동은 알아서 잘 할 것
+CURSOR 쓰는 사람 등 부자 일동은 알아서 잘 할 것
 
 ### 1-2. GitHub CLI 로그인 (최초 1회)
 ```
