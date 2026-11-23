@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청운지림</title>
+</head>
+
+<body>
+    <h1 style="color: blue;">청운지림</h1>
+    <p>안녕하세요, 청운지림입니다!</p>
+<button id='CheckLoginStatus'>로그인 상태 확인</button>
+<button id="myButton" onclick="alert('Hello, World!')">Click Me</button>
+
+    <h2>회원가입</h2>
+    <form method="POST" action="/signup" id="SignupForm">
+        <input type="text" name="username" placeholder="아이디" required>
+        <input type="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">가입하기</button>
+    </form>
+
+    <h2>로그인</h2>
+    <form method="POST" action="/login" id="LoginForm">
+        <input type="text" name="username" placeholder="아이디" required>
+        <input type="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">로그인</button>
+    </form>
+    <script src="client.js"></script>
+</body>
+
+</html>
