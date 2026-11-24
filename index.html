@@ -36,6 +36,24 @@
     <form id="PostForm">
         <input type="text" name="title" placeholder="글 제목" required> 
         <textarea name="content" placeholder="글 내용" required></textarea>
+        <select name="category" required>
+            <option value="">대분야 선택</option>
+            <option value="선택 안 함">선택 안 함</option>
+            <option value="철학·사상">철학·사상</option>
+            <option value="역사·문명">역사·문명</option>
+            <option value="언어·문학">언어·문학</option>
+            <option value="사회">사회</option>
+            <option value="정치·법">정치·법</option>
+            <option value="경제·경영">경제·경영</option>
+            <option value="수학·논리">수학·논리</option>
+            <option value="자연과학">자연과학</option>
+            <option value="생명·의학">생명·의학</option>
+            <option value="기술·공학">기술·공학</option>
+            <option value="예술·창작">예술·창작</option>
+            <option value="생활·라이프스타일">생활·라이프스타일</option>
+            <option value="취미·여가">취미·여가</option>
+            <option value="스포츠">스포츠</option>
+</select>
         <button type="submit">게시하기</button>
     </form>
     <div id="posts"></div>

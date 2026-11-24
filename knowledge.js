@@ -35,6 +35,7 @@ fetch('/me')
 
             document.querySelector('#knowledge-details').innerHTML = `
                 <h1>${escapeHtml(post.title)}</h1>
+                <p>분야: ${escapeHtml(post.category)}</p>
                 <p>작성자: ${escapeHtml(post.username)}</p>
                 <p>${escapeHtml(post.content)}</p>
                 ${editForm}
