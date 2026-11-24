@@ -24,6 +24,7 @@ db.exec(`
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     category TEXT NOT NULL DEFAULT '선택 안 함',
+    source TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `); 
@@ -102,6 +103,7 @@ app.post('/post', (req, res) => {
   const username = req.session.userId;
   const title = req.body.title || '제목 없음';
   const category = req.body.category || '선택 안 함';
+  const source = req.body.source || '';
 
   if (!content) {
     return res.send('글 내용을 입력해주세요.');
@@ -112,8 +114,8 @@ app.post('/post', (req, res) => {
   if (!category || category === '선택 안 함') {
     return res.send('대분야를 선택해주세요.');
 }
-  
-  db.prepare('INSERT INTO posts (username, title, content, category) VALUES (?, ?, ?, ?)').run(username, title, content, category);
+
+  db.prepare('INSERT INTO posts (username, title, content, category, source) VALUES (?, ?, ?, ?, ?)').run(username, title, content, category, source);
   res.send('게시 성공');
 });
 
@@ -148,7 +150,7 @@ app.post('/editPost', (req, res) => {
   if (!req.session.userId) {
     return res.send('로그인 후에 글을 수정할 수 있어요.');
   }
-  const { id, title, content } = req.body;
+  const { id, title, content, source } = req.body;
   const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
   if (!post) {
     return res.send('존재하지 않는 글이에요.');
@@ -159,7 +161,7 @@ app.post('/editPost', (req, res) => {
   if (!title || !content) {
     return res.send('제목과 내용을 모두 입력해주세요.');
   }
-  db.prepare('UPDATE posts SET title = ?, content = ? WHERE id = ?').run(title, content, id);
+  db.prepare('UPDATE posts SET title = ?, content = ?, source = ? WHERE id = ?').run(title, content, source, id);
   res.send('수정 성공');
 });
 
