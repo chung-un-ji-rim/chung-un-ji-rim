@@ -29,6 +29,7 @@ fetch('/me')
                     <input type="hidden" name="id" value="${escapeHtml(post.id)}">
                     <input type="text" name="title" value="${escapeHtml(post.title)}">
                     <textarea name="content">${escapeHtml(post.content)}</textarea>
+                    <input type="text" name="source" value="${escapeHtml(post.source)}">
                     <button type="submit">수정</button>
                 </form>
             ` : '';
@@ -38,6 +39,7 @@ fetch('/me')
                 <p>분야: ${escapeHtml(post.category)}</p>
                 <p>작성자: ${escapeHtml(post.username)}</p>
                 <p>${escapeHtml(post.content)}</p>
+                <p>출처: ${escapeHtml(post.source)}</p>
                 ${editForm}
             `;
 
