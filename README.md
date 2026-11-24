@@ -5,7 +5,7 @@
 청운지림은 현대청운고 지식공동체의 회원 정보와 지식 활동(Knowledge, Response 등)을 공식으로 기록하기 위한 웹 서비스입니다. 이 시스템의 DB가 공동체 공식 활동기록의 기준(Source of Truth)이 되는 것을 목표로 합니다.
 
 > ⚠️ **현재 상태: 프로토타입**
-> 지금은 **회원가입 / 로그인** 기능만 구현된 초기 단계입니다. 전체 기능 범위는 `지식공동체 시스템 전체 기능명세서 v1.0`을 기준으로 합니다.
+> 지금은 **회원가입 / 로그인 / 로그아웃**과 **Knowledge 작성·목록·상세·삭제**의 기초 버전까지 구현된 단계입니다. 대분야·자유태그·출처정보, 수정 기능, Response, 활동일 계산 등은 아직 없습니다. 전체 기능 범위는 `지식공동체 시스템 전체 기능명세서 v1.0`을 기준으로 합니다.
 
 ---
 
@@ -73,9 +73,11 @@ npm start
 
 ```
 chung-un-ji-rim/
-├── script.js          # 서버 (Express): 회원가입·로그인·세션 API, DB 초기화
-├── index.html         # 메인 페이지: 회원가입·로그인 폼, 로그인 상태 확인 버튼
-├── client.js          # 브라우저 쪽 JS: 폼 제출을 fetch로 보내고 결과를 alert로 표시
+├── script.js          # 서버 (Express): 회원가입·로그인·세션 API, Knowledge API, DB 초기화
+├── index.html         # 메인 페이지: 회원가입·로그인·로그아웃 폼, Knowledge 작성 폼, 피드
+├── client.js          # 메인 페이지용 JS: 폼 제출을 fetch로 보내고 피드를 그려줌
+├── knowledge.html     # Knowledge 상세 페이지 뼈대
+├── knowledge.js       # 상세 페이지용 JS: 주소의 id로 글 하나를 가져와 보여줌
 ├── style.css          # 스타일시트 (현재 비어 있음)
 ├── package.json       # 프로젝트 정보, 의존성, 실행 스크립트
 ├── package-lock.json  # 의존성 버전 고정
@@ -107,6 +109,17 @@ chung-un-ji-rim/
 
 - 메인 페이지의 **로그인 상태 확인** 버튼을 누르면 현재 로그인한 아이디를 보여주고, 로그인하지 않았으면 `로그인 안 되어 있음`을 보여줍니다.
 
+### 로그아웃
+
+- 로그아웃 버튼을 누르면 현재 세션을 삭제합니다.
+
+### Knowledge 작성 / 목록 / 상세 / 삭제 (기초 버전)
+
+- 로그인한 사용자만 제목(`title`)과 내용(`content`)으로 글을 작성할 수 있습니다.
+- 메인 페이지 피드에 전체 글이 최신순으로 나열되고, 제목을 누르면 `/knowledge/:id` 상세 페이지로 이동해 작성자·내용을 볼 수 있습니다.
+- 각 글에는 **작성자 본인에게만** 삭제 버튼이 보이고, 서버에서도 작성자 본인인지 다시 확인한 뒤 삭제합니다.
+- 아직 명세서(KNW-002~004)의 대분야·자유태그·출처정보는 저장하지 않고, 수정(KNW-007) 기능도 없습니다.
+
 ### API 목록
 
 | 메서드 | 경로 | 요청 데이터 | 설명 |
@@ -114,8 +127,14 @@ chung-un-ji-rim/
 | `POST` | `/signup` | `username`, `password` (form-urlencoded) | 회원가입 |
 | `POST` | `/login` | `username`, `password` (form-urlencoded) | 로그인, 세션 생성 |
 | `GET` | `/me` | 없음 | 현재 로그인한 아이디 확인 |
+| `POST` | `/logout` | 없음 | 현재 세션 종료 |
+| `POST` | `/post` | `title`, `content` (form-urlencoded) | Knowledge 작성 (로그인 필요) |
+| `POST` | `/getPosts` | 없음 | 전체 Knowledge 목록 (최신순) |
+| `POST` | `/getPost` | `id` (form-urlencoded) | Knowledge 하나 조회 |
+| `POST` | `/deletePost` | `id` (form-urlencoded) | Knowledge 삭제 (작성자 본인만) |
+| `GET` | `/knowledge/:id` | 없음 | Knowledge 상세 페이지(`knowledge.html`) 제공 |
 
-모든 응답은 JSON이 아니라 **한국어 텍스트**입니다. `index.html`, `client.js` 같은 정적 파일은 Express가 프로젝트 폴더에서 그대로 제공합니다.
+모든 응답은 JSON이 아니라 **한국어 텍스트**입니다 (`/getPosts`, `/getPost`만 JSON). `index.html`, `client.js` 같은 정적 파일은 Express가 프로젝트 폴더에서 그대로 제공합니다.
 
 ### DB 구조
 
@@ -127,13 +146,24 @@ chung-un-ji-rim/
 | `username` | TEXT | 아이디 (중복 불가, 필수) |
 | `password` | TEXT | bcrypt 해시된 비밀번호 (필수) |
 
+`posts` 테이블 (Knowledge 기초 버전)
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `id` | INTEGER | 기본키, 자동 증가 |
+| `username` | TEXT | 작성자 아이디 (필수) |
+| `title` | TEXT | 제목 (필수) |
+| `content` | TEXT | 내용 (필수) |
+| `created_at` | DATETIME | 작성 시각 (기본값: 현재 시각) |
+
 ### 아직 없는 것
 
 현재 코드 기준으로 아래 기능은 아직 없습니다.
 
-- 로그아웃
 - 회원 정보 수정 / 탈퇴
-- 세션 저장소: 기본 메모리 저장소를 쓰기 때문에 **서버를 재시작하면 로그인이 풀립니다.** (계정 자체는 `database.db`에 남아 있습니다.)
+- Knowledge 수정(KNW-007), 대분야·자유태그·출처정보(KNW-002~004)
+- Response(댓글), Reaction·Recommend·Save, 활동일 계산(Activity Engine)
+- 세션 저장소: 기본 메모리 저장소를 쓰기 때문에 **서버를 재시작하면 로그인이 풀립니다.** (계정·글 데이터 자체는 `database.db`에 남아 있습니다.)
 
 ---
 
@@ -143,9 +173,9 @@ chung-un-ji-rim/
 
 ### 다음 단계
 
-1. **Knowledge 등록** (명세서 PART 3)
-   - 회원이 신규 Knowledge를 공식 등록 (KNW-001)
-   - 작성자, 공식 등록시각, 대분야(14개 공식 대분야), 자유태그, 본문, 출처정보 등을 저장 (KNW-002~004)
+1. **Knowledge 등록 보완** (명세서 PART 3)
+   - ✅ 회원이 신규 Knowledge를 등록 (KNW-001, 기초 버전 완료)
+   - 대분야(14개 공식 대분야), 자유태그, 출처정보 저장 (KNW-002~004)
    - 작성자 본인의 Knowledge 수정. 수정해도 공식 활동 시각은 바뀌지 않음 (KNW-007)
 2. **Response 등록** (명세서 PART 4)
    - 대상 Knowledge에 연결된 Response 작성 (RSP-001)
@@ -157,7 +187,7 @@ chung-un-ji-rim/
 
 ### 그 이후
 
-- 로그아웃, 세션 secret 등 설정값의 환경 변수 분리
+- 세션 secret 등 설정값의 환경 변수 분리
 - Recommend · Save (PART 4)
 - 3일·3분야 진행도, 최근 28일 활동률 (PART 5)
 - PASS · 휴면, 큐레이터 기능, Weekly / Monthly / Annual 등 (PART 6 이후)
