@@ -116,7 +116,7 @@ app.post('/getPosts', (req, res) => {
 app.post('/getPost', (req, res) => {
   const { id } = req.body;
   const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
-  res.json(post);
+  res.json(post || null);
 });
 
 app.post('/deletePost', (req, res) => {
