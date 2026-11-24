@@ -69,7 +69,7 @@ function loadPosts() {
             const container = document.querySelector('#posts');
             container.innerHTML = posts.map(post => {
                 const deleteButton = (post.username === currentUser) ? `<button onclick="deletePost(${escapeHtml(post.id)})">삭제</button>` : '';
-                return `<p><a href="knowledge/${escapeHtml(post.id)}">${escapeHtml(post.title)}</a> ${deleteButton}</p>`;
+                return `<p>[${escapeHtml(post.category)}] <a href="knowledge/${escapeHtml(post.id)}">${escapeHtml(post.title)}</a> ${deleteButton}</p>`;
             }).join('');
         });
     });

@@ -23,6 +23,7 @@ db.exec(`
     username TEXT NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT '선택 안 함',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `); 
@@ -100,11 +101,19 @@ app.post('/post', (req, res) => {
   const { content } = req.body;
   const username = req.session.userId;
   const title = req.body.title || '제목 없음';
+  const category = req.body.category || '선택 안 함';
 
   if (!content) {
     return res.send('글 내용을 입력해주세요.');
   }
-  db.prepare('INSERT INTO posts (username, title, content) VALUES (?, ?, ?)').run(username, title, content);
+  if (!title) {
+    return res.send('글 제목을 입력해주세요.');
+  }
+  if (!category || category === '선택 안 함') {
+    return res.send('대분야를 선택해주세요.');
+}
+  
+  db.prepare('INSERT INTO posts (username, title, content, category) VALUES (?, ?, ?, ?)').run(username, title, content, category);
   res.send('게시 성공');
 });
 
