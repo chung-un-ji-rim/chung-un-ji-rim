@@ -116,7 +116,7 @@ app.post('/getPosts', (req, res) => {
 app.post('/getPost', (req, res) => {
   const { id } = req.body;
   const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
-  res.json(post);
+  res.json(post || null);
 });
 
 app.post('/deletePost', (req, res) => {
@@ -133,6 +133,25 @@ app.post('/deletePost', (req, res) => {
   }
   db.prepare('DELETE FROM posts WHERE id = ?').run(id);
   res.send('삭제 성공');
+});
+
+app.post('/editPost', (req, res) => {
+  if (!req.session.userId) {
+    return res.send('로그인 후에 글을 수정할 수 있어요.');
+  }
+  const { id, title, content } = req.body;
+  const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
+  if (!post) {
+    return res.send('존재하지 않는 글이에요.');
+  }
+  if (post.username !== req.session.userId) {
+    return res.send('자신의 글만 수정할 수 있어요.');
+  }
+  if (!title || !content) {
+    return res.send('제목과 내용을 모두 입력해주세요.');
+  }
+  db.prepare('UPDATE posts SET title = ?, content = ? WHERE id = ?').run(title, content, id);
+  res.send('수정 성공');
 });
 
 //HTML 파일 제공
