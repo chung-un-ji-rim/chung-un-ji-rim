@@ -68,8 +68,8 @@ function loadPosts() {
         .then(posts => {
             const container = document.querySelector('#posts');
             container.innerHTML = posts.map(post => {
-                const deleteButton = (post.username === currentUser) ? `<button onclick="deletePost(${post.id})">삭제</button>` : '';
-                return `<p><a href="knowledge/${post.id}">${post.title}</a> ${deleteButton}</p>`;
+                const deleteButton = (post.username === currentUser) ? `<button onclick="deletePost(${escapeHtml(post.id)})">삭제</button>` : '';
+                return `<p><a href="knowledge/${escapeHtml(post.id)}">${escapeHtml(post.title)}</a> ${deleteButton}</p>`;
             }).join('');
         });
     });
@@ -88,4 +88,28 @@ function deletePost(id) {
         loadPosts();
     });
 }
+
+function editPost(id, title, content) {
+    fetch('/editPost', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ id: id, title: title, content: content })
+    })
+    .then(response => response.text())
+    .then(message => {
+        loadPosts();
+    });
+}
+
+function escapeHtml(unsafe) {
+    return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 loadPosts();

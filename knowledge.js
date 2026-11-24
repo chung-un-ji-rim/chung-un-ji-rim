@@ -1,4 +1,14 @@
 const id = window.location.pathname.split('/').pop();
+
+function escapeHtml(unsafe) {
+    return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 fetch('/me')
     .then(response => response.text())
     .then(currentUser => {
@@ -12,17 +22,17 @@ fetch('/me')
             const editForm = (post.username === currentUser) ? `
                 <h3>글 수정</h3>
                 <form id="editForm">
-                    <input type="hidden" name="id" value="${post.id}">
-                    <input type="text" name="title" value="${post.title}">
-                    <textarea name="content">${post.content}</textarea>
+                    <input type="hidden" name="id" value="${escapeHtml(post.id)}">
+                    <input type="text" name="title" value="${escapeHtml(post.title)}">
+                    <textarea name="content">${escapeHtml(post.content)}</textarea>
                     <button type="submit">수정</button>
                 </form>
             ` : '';
 
             document.querySelector('#knowledge-details').innerHTML = `
-                <h1>${post.title}</h1>
-                <p>작성자: ${post.username}</p>
-                <p>${post.content}</p>
+                <h1>${escapeHtml(post.title)}</h1>
+                <p>작성자: ${escapeHtml(post.username)}</p>
+                <p>${escapeHtml(post.content)}</p>
                 ${editForm}
             `;
 
