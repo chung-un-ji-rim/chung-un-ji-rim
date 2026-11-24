@@ -38,7 +38,6 @@
         <textarea name="content" placeholder="글 내용" required></textarea>
         <select name="category" required>
             <option value="">대분야 선택</option>
-            <option value="선택 안 함">선택 안 함</option>
             <option value="철학·사상">철학·사상</option>
             <option value="역사·문명">역사·문명</option>
             <option value="언어·문학">언어·문학</option>
@@ -53,7 +52,8 @@
             <option value="생활·라이프스타일">생활·라이프스타일</option>
             <option value="취미·여가">취미·여가</option>
             <option value="스포츠">스포츠</option>
-</select>
+        </select>
+        <input type="text" name="source" placeholder="출처 (선택사항)">
         <button type="submit">게시하기</button>
     </form>
     <div id="posts"></div>
