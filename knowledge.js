@@ -19,6 +19,10 @@ fetch('/me')
         })
         .then(response => response.json())
         .then(post => {
+            if (!post) {
+                document.querySelector('#knowledge-details').innerHTML = '<p>존재하지 않는 글이에요.</p>';
+                return;
+            }
             const editForm = (post.username === currentUser) ? `
                 <h3>글 수정</h3>
                 <form id="editForm">

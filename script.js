@@ -147,6 +147,9 @@ app.post('/editPost', (req, res) => {
   if (post.username !== req.session.userId) {
     return res.send('자신의 글만 수정할 수 있어요.');
   }
+  if (!title || !content) {
+    return res.send('제목과 내용을 모두 입력해주세요.');
+  }
   db.prepare('UPDATE posts SET title = ?, content = ? WHERE id = ?').run(title, content, id);
   res.send('수정 성공');
 });
